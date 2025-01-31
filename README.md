@@ -1,66 +1,166 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Expense Tracker Documentation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Introduction
+This project is a web application built with Laravel, using Sail and Docker for development. It allows users to track their expenses, mark them as paid or unpaid, and see an overview of their spending. User authentication and account management are handled through Laravel Breeze.
 
-## About Laravel
+## Features
+- User authentication via accounts.
+- Register an expense with a subject, amount, date, and payment status.
+- Mark expenses as paid or unpaid.
+- View total expenses and remaining unpaid expenses.
+- Delete expenses.
+- Profile management including updates and account deletion.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Technologies Used
+- **Laravel 10** (with Sail for Docker-based development)
+- **Laravel Breeze** (for authentication)
+- **TailwindCSS** (for styling)
+- **SQLite** (for database storage)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation
 
-## Learning Laravel
+### Prerequisites
+Make sure you have the following installed:
+- Docker & Docker Compose
+- PHP 8.0+
+- Composer
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Application Structure
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### **Routes**
+The main routes for expenses are defined in `web.php`:
+```php
+Route::middleware(['auth'])->group(function () {
+    Route::post('/expense/insert', [ExpenseController::class, 'insert'])->name('expense.insert');
+    Route::put('/expense/update-paid/{id}', [ExpenseController::class, 'updatePaid'])->name('expense.updatePaid');
+    Route::delete('/expense/delete/{id}', [ExpenseController::class, 'delete'])->name('expense.delete');
+});
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### **Controllers**
 
-## Laravel Sponsors
+#### **ExpenseController**
+Handles expense operations (CRUD):
+```php
+namespace App\Http\Controllers;
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+use App\Models\Expense;
+use Illuminate\Http\Request;
 
-### Premium Partners
+class ExpenseController extends Controller {
+    public function insert(Request $request) {
+        $validated = $request->validate([
+            'subject' => 'required|string|max:255',
+            'quantity' => 'required|regex:/^\d+(\.\d{1,2})?$/|min:0.01',
+            'date' => 'required|date',
+            'paid' => 'nullable|boolean',
+        ]);
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+        $expense = new Expense();
+        $expense->subject = $request['subject'];
+        $expense->quantity = $request['quantity'];
+        $expense->paid = $request->has('paid') ? 1 : 0;
+        $expense->date = $request['date'];
+        $expense->userID = auth()->id();
+        $expense->save();
 
-## Contributing
+        return redirect()->back()->with('success', 'Expense registered successfully.');
+    }
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    public function get() {
+        return Expense::all();
+    }
 
-## Code of Conduct
+    public function updatePaid(Request $request, $id) {
+        $expense = Expense::findOrFail($id);
+        $expense->paid = $request->has('paid') ? true : false;
+        $expense->save();
+        return redirect()->route('dashboard');
+    }
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    public function delete($id) {
+        $expense = Expense::findOrFail($id);
+        $expense->delete();
+        return redirect()->route('dashboard')->with('message', 'Expense deleted successfully!');
+    }
+}
+```
 
-## Security Vulnerabilities
+#### **ProfileController**
+Handles user profile operations:
+```php
+namespace App\Http\Controllers;
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
 
-## License
+class ProfileController extends Controller {
+    public function edit(Request $request): View {
+        return view('profile.edit', [
+            'user' => $request->user(),
+        ]);
+    }
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    public function update(ProfileUpdateRequest $request): RedirectResponse {
+        $request->user()->fill($request->validated());
+
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
+        }
+
+        $request->user()->save();
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    public function destroy(Request $request): RedirectResponse {
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
+        ]);
+
+        $user = $request->user();
+        Auth::logout();
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return Redirect::to('/');
+    }
+}
+```
+
+---
+
+## Deployment Process
+To deploy the application, follow these steps:
+
+1. Navigate to the project directory:
+   ```sh
+   cd locationProject
+   ```
+
+2. Start Laravel Sail in detached mode:
+   ```sh
+   ./vendor/bin/sail up -d
+   ```
+
+3. Run the frontend assets:
+   ```sh
+   ./vendor/bin/sail npm run dev
+   ```
+
+4. Access the application at:
+   ```
+   http://localhost
+   ```
+
+---
+
+## Conclusion
+This Laravel-based Expense Tracker allows users to track their expenses efficiently with authentication and an intuitive UI. By leveraging Laravel Sail and Breeze, the setup is simple and scalable.
