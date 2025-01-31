@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Expense;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -9,7 +10,9 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $expenses = Expense::where('userID', auth()->id())->get();
+
+    return view('dashboard', compact('expenses'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -20,6 +23,7 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/expense', [ExpenseController::class, 'insert'])->name('expense.insert');
 Route::get('/expense', [ExpenseController::class, 'get'])->name('expense.get');
-
+Route::put('/expense/{expense}/updatePaid', [ExpenseController::class, 'updatePaid'])->name('expense.updatePaid');
+Route::delete('/expense/{expense}/delete', [ExpenseController::class, 'delete'])->name('expense.delete');
 
 require __DIR__.'/auth.php';

@@ -9,7 +9,7 @@ class ExpenseController extends Controller {
     public function insert(Request $request) {
         $validated = $request->validate([
             'subject' => 'required|string|max:255',
-            'quantity' => 'required|numeric|min:0',
+            'quantity' => 'required|regex:/^\d+(\.\d{1,2})?$/|min:0.01',
             'date' => 'required|date',
             'paid' => 'nullable|boolean',
         ]);
@@ -21,9 +21,34 @@ class ExpenseController extends Controller {
         $expense->date = $request['date'];
         $expense->userID = auth()->id();
         $expense->save();
+
+        return redirect()->back()->with('success', 'Gasto registrado con éxito.');
     }
 
     public function get() {
         return Expense::all();
+    }
+
+    public function updatePaid(Request $request, $id)
+    {
+        // Buscar el gasto por ID
+        $expense = Expense::findOrFail($id);
+
+        // Actualizar el campo 'paid' en la base de datos
+        $expense->paid = $request->has('paid') ? true : false;
+        $expense->save();
+
+        // Retornar la misma página con los gastos actualizados
+        return redirect()->route('dashboard');
+    }
+
+    public function delete($id)
+    {
+        // Buscar el gasto por ID y eliminarlo
+        $expense = Expense::findOrFail($id);
+        $expense->delete();
+
+        // Redirigir a la página de dashboard después de eliminar el gasto
+        return redirect()->route('dashboard')->with('message', 'Expense deleted successfully!');
     }
 }
