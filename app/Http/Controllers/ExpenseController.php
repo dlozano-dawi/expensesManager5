@@ -51,4 +51,34 @@ class ExpenseController extends Controller {
         // Redirigir a la página de dashboard después de eliminar el gasto
         return redirect()->route('dashboard')->with('message', 'Expense deleted successfully!');
     }
+
+    public function apiInsert(Request $request) {
+
+        // Validar la solicitud
+        $validated = $request->validate([
+            'subject' => 'required|string|max:255',
+            'quantity' => 'required|regex:/^\d+(\.\d{1,2})?$/|min:0.01',
+            'date' => 'required|date',
+            'paid' => 'nullable|boolean',
+        ]);
+
+        // Obtener el usuario autenticado
+        $user = $request->user(); // Equivalente a auth()->user()
+
+        // Crear la instancia de Expense
+        $expense = new Expense();
+        $expense->subject = $validated['subject'];
+        $expense->quantity = $validated['quantity'];
+        $expense->paid = $request->has('paid') ? 1 : 0;
+        $expense->date = $validated['date'];
+        $expense->userID = $user->id; // Asignar el ID del dueño del token
+        $expense->save();
+
+        // Devolver una respuesta JSON
+        return response()->json([
+            'message' => 'Gasto registrado con éxito',
+            'expense' => $expense
+        ], 201);
+    }
+
 }

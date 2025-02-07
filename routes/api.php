@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\ExpenseController;
 
 Route::post('/login', function (Request $request) {
     $request->validate([
@@ -44,3 +45,7 @@ Route::post('/register', function (Request $request) {
         'user' => $user
     ], 201);
 });
+
+Route::middleware('auth:sanctum')->get('/expenses', [ExpenseController::class, 'get']);
+
+Route::middleware('auth:sanctum')->post('/create', [ExpenseController::class, 'apiInsert']);
