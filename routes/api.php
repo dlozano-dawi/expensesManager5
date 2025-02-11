@@ -46,6 +46,10 @@ Route::post('/register', function (Request $request) {
     ], 201);
 });
 
-Route::middleware('auth:sanctum')->get('/expenses', [ExpenseController::class, 'get']);
+Route::middleware('auth:sanctum')->get('/expenses', [ExpenseController::class, 'getByUserId']);
 
 Route::middleware('auth:sanctum')->post('/create', [ExpenseController::class, 'apiInsert']);
+
+Route::middleware('auth:sanctum')->delete('/delete/{id}', [ExpenseController::class, 'apiDeleteExpense']);
+
+Route::middleware('auth:sanctum')->put('/update', [ExpenseController::class, 'apiUpdateExpense']);
