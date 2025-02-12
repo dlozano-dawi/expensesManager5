@@ -15,8 +15,8 @@
                     <label for="subject" class="block">{{ __("Subject") }}</label>
                     <input type="text" name="subject" id="subject" class="block mb-5 w-48 sm:rounded" required>
 
-                    <label for="quantity" class="block">{{ __("Quantity") }}</label>
-                    <input type="number" name="quantity" id="quantity" class="block mb-5 w-48 sm:rounded" required step="0.01">
+                    <label for="price" class="block">{{ __("Price") }}</label>
+                    <input type="number" name="price" id="price" class="block mb-5 w-48 sm:rounded" required step="0.01">
 
                     <label for="date" class="block">{{ __("Date") }}</label>
                     <input type="date" name="date" id="date" class="block mb-5 w-48 sm:rounded" required>
@@ -40,7 +40,7 @@
                     @else
                         @foreach($expenses as $expense)
                             <div class="p-2 mb-4 border-b flex justify-between">
-                                <h3 class="w-1/3"><strong>{{ $expense->subject }} {{ $expense->quantity }}€</strong></h3>
+                                <h3 class="w-1/3"><strong>{{ $expense->subject }} {{ $expense->price }}€</strong></h3>
                                 <span class="w-1/3">{{ $expense->date }}</span>
 
                                 <div class="w-3/3 flex items-center space-x-4">

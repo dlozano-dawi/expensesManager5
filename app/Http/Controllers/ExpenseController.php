@@ -3,20 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use Exception;
 use Illuminate\Http\Request;
 
 class ExpenseController extends Controller {
     public function insert(Request $request) {
         $validated = $request->validate([
             'subject' => 'required|string|max:255',
-            'quantity' => 'required|regex:/^\d+(\.\d{1,2})?$/|min:0.01',
+            'price' => 'required|regex:/^\d+(\.\d{1,2})?$/|min:0.01',
             'date' => 'required|date',
             'paid' => 'nullable|boolean',
         ]);
 
         $expense = new Expense();
         $expense->subject = $request['subject'];
-        $expense->quantity = $request['quantity'];
+        $expense->price = $request['price'];
         $expense->paid = $request->has('paid') ? 1 : 0;
         $expense->date = $request['date'];
         $expense->userID = auth()->id();
@@ -29,6 +30,7 @@ class ExpenseController extends Controller {
         return Expense::all();
     }
 
+    /** Getting all expenses by user */
     public function getByUserId(Request $request) {
         return Expense::where('userID', $request->user()->id)->get();
     }
@@ -57,7 +59,7 @@ class ExpenseController extends Controller {
 
         $validated = $request->validate([
             'subject' => 'required|string|max:255',
-            'quantity' => 'required|regex:/^\d+(\.\d{1,2})?$/|min:0.01',
+            'price' => 'required|regex:/^\d+(\.\d{1,2})?$/|min:0.01',
             'date' => 'required|date',
             'paid' => 'nullable|boolean',
         ]);
@@ -66,7 +68,7 @@ class ExpenseController extends Controller {
 
         $expense = new Expense();
         $expense->subject = $validated['subject'];
-        $expense->quantity = $validated['quantity'];
+        $expense->price = $validated['price'];
         $expense->paid = $validated['paid'];
         $expense->date = $validated['date'];
         $expense->userID = $user->id;
@@ -79,23 +81,31 @@ class ExpenseController extends Controller {
     }
 
     public function apiDeleteExpense($id) {
-        $expense = Expense::findOrFail($id);
-        $expense->delete();
+        try {
+            $expense = Expense::findOrFail($id);
+            $expense->delete();
 
-        return response()->json([
-            'message' => 'Expense deleted successfully'
-        ], 201);
+            return response()->json([
+                'message' => 'Expense deleted successfully'
+            ], 201);
+        } catch (Exception) {
+            return response()->json(['message' => 'Expense not found'], 404);
+        }
     }
 
     public function apiUpdateExpense(Request $request) {
-        $expense = Expense::findOrFail($request->id);
+        try {
+            $expense = Expense::findOrFail($request->id);
 
-        $expense->paid = $request->paid;
-        $expense->save();
+            $expense->paid = $request->paid;
+            $expense->save();
 
-        return response()->json([
-            'message' => 'Expense updated successfully',
-            'expense' => $expense
-        ], 201);
+            return response()->json([
+                'message' => 'Expense updated successfully',
+                'expense' => $expense
+            ], 201);
+        } catch (Exception) {
+            return response()->json(['message' => 'Expense not found'], 404);
+        }
     }
 }
