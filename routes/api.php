@@ -46,23 +46,10 @@ Route::post('/register', function (Request $request) {
     ], 201);
 });
 
-/** Getting all expenses by user */
 Route::middleware('auth:sanctum')->get('/expenses', [ExpenseController::class, 'getByUserId']);
 
-/** Creating an expenses */
 Route::middleware('auth:sanctum')->post('/create', [ExpenseController::class, 'apiInsert']);
 
-/**
- * Deleting an expenses, indicating the id of the expenses on the route
- * Example: http://localhost/api/delete/1
- */
 Route::middleware('auth:sanctum')->delete('/delete/{id}', [ExpenseController::class, 'apiDeleteExpense']);
 
-/** Updating an expense
- * Example body:
- * {
- *    "id": 1,
- *    "paid": 1 // Boolean value (1: true or 0: false)
- * }
- */
 Route::middleware('auth:sanctum')->put('/update', [ExpenseController::class, 'apiUpdateExpense']);

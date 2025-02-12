@@ -45,6 +45,7 @@ class ExpenseController extends Controller {
         return redirect()->route('dashboard');
     }
 
+    /** Getting all expenses by user */
     public function delete($id) {
         $expense = Expense::findOrFail($id);
         $expense->delete();
@@ -52,6 +53,7 @@ class ExpenseController extends Controller {
         return redirect()->route('dashboard')->with('message', 'Expense deleted successfully!');
     }
 
+    /** Creating an expenses */
     public function apiInsert(Request $request) {
         if (!$request->user()) {
             return response()->json(['error' => 'No autenticado.'], 401);
@@ -80,6 +82,10 @@ class ExpenseController extends Controller {
         ], 201);
     }
 
+    /**
+     * Deleting an expenses, indicating the id of the expenses on the route
+     * Example: http://localhost/api/delete/1
+     */
     public function apiDeleteExpense($id) {
         try {
             $expense = Expense::findOrFail($id);
@@ -93,6 +99,15 @@ class ExpenseController extends Controller {
         }
     }
 
+    /** Updating an expense
+     * Example body:
+     * ```
+     * {
+     *    "id": 1,
+     *    "paid": 1 // Boolean value (1: true or 0: false)
+     * }
+     * ```
+     */
     public function apiUpdateExpense(Request $request) {
         try {
             $expense = Expense::findOrFail($request->id);
