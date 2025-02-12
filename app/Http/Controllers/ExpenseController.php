@@ -27,12 +27,7 @@ class ExpenseController extends Controller {
     }
 
     public function get() {
-        return Expense::all();
-    }
-
-    /** Getting all expenses by user */
-    public function getByUserId(Request $request) {
-        return Expense::where('userID', $request->user()->id)->get();
+        return Expense::where('userID', auth()->id());
     }
 
     public function updatePaid(Request $request, $id)
@@ -45,7 +40,6 @@ class ExpenseController extends Controller {
         return redirect()->route('dashboard');
     }
 
-    /** Getting all expenses by user */
     public function delete($id) {
         $expense = Expense::findOrFail($id);
         $expense->delete();
@@ -53,8 +47,37 @@ class ExpenseController extends Controller {
         return redirect()->route('dashboard')->with('message', 'Expense deleted successfully!');
     }
 
-    /** Creating an expenses */
-    public function apiInsert(Request $request) {
+    /** Returns all expenses by user */
+    public function getExpensesByUser(Request $request) {
+        return Expense::where('userID', $request->user()->id)->get();
+    }
+
+    /** Returns an expenses list filtered by if its paid or not
+     *
+     * Example route:
+     *
+     * http://localhost/api/1 -> Returns all paid expenses
+     *
+     * http://localhost/api/0 -> Returns all non-paid expenses
+     * */
+    public function getFilteredExpenses(Request $request, $paid){
+        return Expense::where('userID', $request->user()->id)->where('paid', $paid)->get();
+    }
+
+    /** Creating an expense
+     *
+     * Example body:
+     *
+     * ```
+     * {
+     *    "subject": "Red Bull x 3",
+     *    "price": "4",
+     *    "date": "2025-02-07",
+     *    "paid": false
+     * }
+     * ```
+     * */
+    public function insertExpense(Request $request) {
         if (!$request->user()) {
             return response()->json(['error' => 'No autenticado.'], 401);
         }
@@ -84,9 +107,10 @@ class ExpenseController extends Controller {
 
     /**
      * Deleting an expenses, indicating the id of the expenses on the route
+     *
      * Example: http://localhost/api/delete/1
      */
-    public function apiDeleteExpense($id) {
+    public function deleteExpense($id) {
         try {
             $expense = Expense::findOrFail($id);
             $expense->delete();
@@ -100,6 +124,7 @@ class ExpenseController extends Controller {
     }
 
     /** Updating an expense
+     *
      * Example body:
      * ```
      * {
@@ -108,7 +133,7 @@ class ExpenseController extends Controller {
      * }
      * ```
      */
-    public function apiUpdateExpense(Request $request) {
+    public function updateExpense(Request $request) {
         try {
             $expense = Expense::findOrFail($request->id);
 
