@@ -1,6 +1,5 @@
 # Expense Manager Documentation
 
----
 # API Documentation
 
 ## Introduction
@@ -213,8 +212,6 @@ class ProfileController extends Controller {
     }
 }
 ```
-
----
 
 ## Deployment Process
 To deploy the application, follow these steps:
