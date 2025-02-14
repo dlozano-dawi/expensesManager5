@@ -1,6 +1,4 @@
-# Expense Manager Documentation
-
-# API Documentation
+# Expense Manager API Documentation
 
 ## Introduction
 This project is an api application built with Laravel, using Sail and Docker for development. It allows users to manage their expenses, mark them as paid or unpaid, and see an overview of their spending. User authentication and account management are handled through Laravel Breeze and Sanctum.
@@ -77,8 +75,44 @@ To deploy the application, follow these steps:
         }
     }
     ```
+#### Manage expenses
+1. You can create an Expenses with Name, Price, Category of it, Date (YYYY-mm-DD) and mark it as paid or not (1 or 0), to do this you need to make a POST call to:    
+   http://localhost/api/create
+    ``` JSON
+    {
+        "subject": "Red Bull",
+        "price": "1.89",
+        "date": "2025-02-07",
+        "paid": false,
+        "category": "Eatables"
+    }
+    ``` 
+2. Also, you can update it, indicating the ID of the expense and making an UPDATE call to:
+   http://localhost/api/update
+    ``` JSON
+    {
+        "id": 1,
+        "paid": 1
+    }
+    ```
 
-# WEB Documentation
+3. Finally, you can delete an Expense, with a DELETE call to the next route, indicating the ID of the expense to delete on it
+   http://localhost/api/delete/1
+    ``` JSON
+    {
+        "token": "1|BpxqULcMO6FNTn8oBMeEu9nagKBYs6963RErKtnd1b4aaa1e",
+        "user": {
+            "id": 1,
+            "name": "David",
+            "email": "dlozanocabeza@cifpfbmoll.eu",
+            "email_verified_at": null,
+            "created_at": "2025-02-14T16:09:29.000000Z",
+            "updated_at": "2025-02-14T16:09:29.000000Z"
+        }
+    }
+    ```
+
+# Expense Manager WEB Documentation
 
 ## Introduction
 This project is a web application built with Laravel, using Sail and Docker for development. It allows users to track their expenses, mark them as paid or unpaid, and see an overview of their spending. User authentication and account management are handled through Laravel Breeze.
