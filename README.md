@@ -96,21 +96,8 @@ To deploy the application, follow these steps:
     }
     ```
 
-3. Finally, you can delete an Expense, with a DELETE call to the next route, indicating the ID of the expense to delete on it
-   http://localhost/api/delete/1
-    ``` JSON
-    {
-        "token": "1|BpxqULcMO6FNTn8oBMeEu9nagKBYs6963RErKtnd1b4aaa1e",
-        "user": {
-            "id": 1,
-            "name": "David",
-            "email": "dlozanocabeza@cifpfbmoll.eu",
-            "email_verified_at": null,
-            "created_at": "2025-02-14T16:09:29.000000Z",
-            "updated_at": "2025-02-14T16:09:29.000000Z"
-        }
-    }
-    ```
+3. Finally, you can delete an Expense, with a DELETE call to the next route, indicating the ID of the expense to delete on it  
+    http://localhost/api/delete/1
 
 # Expense Manager WEB Documentation
 
