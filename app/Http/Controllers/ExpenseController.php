@@ -117,7 +117,7 @@ class ExpenseController extends Controller {
 
             return response()->json([
                 'message' => 'Expense deleted successfully'
-            ], 201);
+            ]);
         } catch (Exception) {
             return response()->json(['message' => 'Expense not found'], 404);
         }
@@ -143,7 +143,7 @@ class ExpenseController extends Controller {
             return response()->json([
                 'message' => 'Expense updated successfully',
                 'expense' => $expense
-            ], 201);
+            ]);
         } catch (Exception) {
             return response()->json(['message' => 'Expense not found'], 404);
         }
