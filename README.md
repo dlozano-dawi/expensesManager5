@@ -81,7 +81,6 @@ To deploy the application, follow these steps:
 
 # WEB Documentation
 
----
 ## Introduction
 This project is a web application built with Laravel, using Sail and Docker for development. It allows users to track their expenses, mark them as paid or unpaid, and see an overview of their spending. User authentication and account management are handled through Laravel Breeze.
 
@@ -98,8 +97,6 @@ This project is a web application built with Laravel, using Sail and Docker for 
 - **Laravel Breeze** (for authentication)
 - **TailwindCSS** (for styling)
 - **SQLite** (for database storage)
-
----
 
 ## Installation
 
@@ -241,8 +238,6 @@ To deploy the application, follow these steps:
    ```
    http://localhost
    ```
-
----
 
 ## Conclusion
 This Laravel-based Expense Tracker allows users to track their expenses efficiently with authentication and an intuitive UI. By leveraging Laravel Sail and Breeze, the setup is simple and scalable.
