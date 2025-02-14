@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->boolean('paid');
             $table->date('date');
+            $table->enum('category',['Others', 'Eatables', 'Leisure', 'Electronics', 'Utilities', 'Clothes', 'Health']);
             $table->timestamps();
         });
     }
