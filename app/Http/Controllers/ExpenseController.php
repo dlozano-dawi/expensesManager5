@@ -74,7 +74,7 @@ class ExpenseController extends Controller {
      *    "price": "4",
      *    "date": "2025-02-07",
      *    "paid": false,
-     *    "category": "Drinks"
+     *    "category": "Eatables"
      * }
      * ```
      * */
