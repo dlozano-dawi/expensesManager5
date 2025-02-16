@@ -75,9 +75,16 @@ To deploy the application, follow these steps:
         }
     }
     ```
+   
+#### Authentication
+For use the next endPoints, you will need to set the authentication at bearer token in the call with the token given after login.
+
+If you are using Postman, which is recommendable, you have to go to:  
+Authorization > AuthType as Bearer Token > Set the value with the given token.
+
 #### Manage expenses
 1. You can create an Expenses with Name, Price, Category of it, Date (YYYY-mm-DD) and mark it as paid or not (1 or 0), to do this you need to make a POST call to:    
-   http://localhost/api/create
+    http://localhost/api/create
     ``` JSON
     {
         "subject": "Red Bull",
@@ -88,7 +95,7 @@ To deploy the application, follow these steps:
     }
     ``` 
 2. Also, you can update it, indicating the ID of the expense and making an UPDATE call to:
-   http://localhost/api/update
+    http://localhost/api/update
     ``` JSON
     {
         "id": 1,
@@ -98,6 +105,14 @@ To deploy the application, follow these steps:
 
 3. Finally, you can delete an Expense, with a DELETE call to the next route, indicating the ID of the expense to delete on it  
     http://localhost/api/delete/1
+
+#### View expenses
+1. You can get all of your expenses, doing a GET call to  
+    http://localhost/api/expenses
+  
+
+2. Also, you can get your expenses, filtered by if they are paid or not (where 1 is expenses paid and 0 not paid)  
+    http://localhost/api/expenses/1 
 
 # Expense Manager WEB Documentation
 
