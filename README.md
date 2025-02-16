@@ -156,7 +156,7 @@ Route::middleware(['auth'])->group(function () {
 ### **Controllers**
 
 #### **ExpenseController**
-Handles expense operations (CRUD):
+Handles expense operations (CRUD): 
 ```php
 namespace App\Http\Controllers;
 
