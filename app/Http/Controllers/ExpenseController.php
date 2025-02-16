@@ -73,7 +73,8 @@ class ExpenseController extends Controller {
      *    "subject": "Red Bull x 3",
      *    "price": "4",
      *    "date": "2025-02-07",
-     *    "paid": false
+     *    "paid": false,
+     *    "category": "Drinks"
      * }
      * ```
      * */
@@ -87,6 +88,7 @@ class ExpenseController extends Controller {
             'price' => 'required|regex:/^\d+(\.\d{1,2})?$/|min:0.01',
             'date' => 'required|date',
             'paid' => 'nullable|boolean',
+            'category' => 'nullable|in:Others,Eatables,Leisure,Electronics,Utilities,Clothes,Health'
         ]);
 
         $user = $request->user();
@@ -94,8 +96,9 @@ class ExpenseController extends Controller {
         $expense = new Expense();
         $expense->subject = $validated['subject'];
         $expense->price = $validated['price'];
-        $expense->paid = $validated['paid'];
+        $expense->paid = $validated['paid'] ?? false;
         $expense->date = $validated['date'];
+        $expense->category = $validated['category'] ?? 'Others';
         $expense->userID = $user->id;
         $expense->save();
 
